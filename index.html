@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Generator Link Undangan Walimatussafar</title>
+  <meta name="theme-color" content="#9f7a12" />
+  <style>
+    :root{
+      --text:#2f2a23;
+      --muted:#6c6357;
+      --gold:#aa7b00;
+      --gold-dark:#8d6500;
+      --line:#ead9aa;
+      --shadow:0 18px 50px rgba(80,58,9,.10);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{
+      font-family:"Segoe UI",Tahoma,Arial,sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at top left, #fffaf0 0, rgba(255,250,240,.85) 18%, transparent 36%),
+        radial-gradient(circle at bottom right, #f0e4c6 0, rgba(240,228,198,.45) 18%, transparent 34%),
+        linear-gradient(180deg,#f8f5ef 0%, #f4efe5 100%);
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+    }
+    .card{
+      width:min(100%, 760px);
+      background:#fff;
+      border:1px solid #efe4ca;
+      border-radius:30px;
+      box-shadow:var(--shadow);
+      padding:28px;
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 16px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background:#fff;
+      color:var(--gold-dark);
+      font-size:13px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      font-weight:700;
+    }
+    h1{
+      margin:18px 0 10px;
+      font-size:clamp(28px,4vw,44px);
+      line-height:1.12;
+      letter-spacing:-.03em;
+      font-family:Georgia,"Times New Roman",serif;
+    }
+    p{
+      margin:0;
+      color:var(--muted);
+      line-height:1.85;
+      font-size:16px;
+    }
+    .box{
+      margin-top:24px;
+      padding:22px;
+      border:1px solid #f0e4c6;
+      border-radius:22px;
+      background:#fffdfa;
+    }
+    label{
+      display:block;
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.18em;
+      color:var(--muted);
+      font-weight:700;
+      margin-bottom:10px;
+    }
+    input{
+      width:100%;
+      min-height:54px;
+      border:1px solid #e8d7a5;
+      border-radius:16px;
+      padding:0 16px;
+      font-size:16px;
+      color:var(--text);
+      outline:none;
+      background:#fff;
+    }
+    input:focus{
+      border-color:#c89a1a;
+      box-shadow:0 0 0 4px rgba(200,154,26,.10);
+    }
+    .row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-top:16px;
+    }
+    button, .link-btn{
+      appearance:none;
+      border:0;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:50px;
+      padding:0 18px;
+      border-radius:999px;
+      background:linear-gradient(180deg,#bb8a00 0%, #9f7700 100%);
+      color:#fff;
+      font-weight:700;
+      font-size:15px;
+      text-decoration:none;
+    }
+    .secondary{
+      background:#fff;
+      color:var(--gold-dark);
+      border:1px solid var(--line);
+    }
+    .result{
+      margin-top:18px;
+      padding:18px;
+      border-radius:18px;
+      background:#fff;
+      border:1px solid #eee0bb;
+      word-break:break-word;
+      font-size:15px;
+      line-height:1.8;
+      color:#4a4136;
+    }
+    .result strong{
+      color:var(--gold-dark);
+    }
+    .hint{
+      margin-top:12px;
+      font-size:14px;
+      color:#7a6f60;
+    }
+    .hidden{display:none}
+    @media (max-width:520px){
+      .card{padding:18px;border-radius:22px}
+      .box{padding:16px}
+      .row>*{width:100%}
+      button, .link-btn{width:100%}
+    }
+  </style>
+</head>
+<body>
+  <section class="card">
+    <div class="badge">Generator Link Tamu</div>
+    <h1>Masukkan nama tamu, lalu ambil link undangannya</h1>
+    <p>
+      Website ini khusus untuk membuat link undangan personal dari undangan utama Anda.
+      Cukup isi nama tamu, lalu link akan otomatis disesuaikan.
+    </p>
+
+    <div class="box">
+      <label for="guestName">Nama Tamu</label>
+      <input id="guestName" type="text" placeholder="Contoh: Doni" />
+
+      <div class="row">
+        <button onclick="generateLink()">Buat Link</button>
+        <button class="secondary" onclick="copyLink()">Copy Link</button>
+        <a id="openLinkBtn" class="link-btn secondary hidden" href="#" target="_blank" rel="noreferrer">Buka Link</a>
+      </div>
+
+      <div id="resultBox" class="result hidden"></div>
+      <div class="hint">
+        Link utama: <strong>https://walimatussafar-invitation.vercel.app/</strong>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const baseUrl = "https://walimatussafar-invitation.vercel.app/";
+    const input = document.getElementById("guestName");
+    const resultBox = document.getElementById("resultBox");
+    const openLinkBtn = document.getElementById("openLinkBtn");
+
+    function buildGuestLink(name) {
+      return baseUrl + "?to=" + encodeURIComponent(name.trim());
+    }
+
+    function generateLink() {
+      const name = input.value.trim();
+
+      if (!name) {
+        resultBox.classList.remove("hidden");
+        resultBox.innerHTML = "<strong>Nama tamu belum diisi.</strong><br>Silakan isi nama tamu terlebih dahulu.";
+        openLinkBtn.classList.add("hidden");
+        return;
+      }
+
+      const link = buildGuestLink(name);
+      resultBox.classList.remove("hidden");
+      resultBox.innerHTML = "<strong>Link untuk " + escapeHtml(name) + ":</strong><br>" + link;
+      openLinkBtn.href = link;
+      openLinkBtn.classList.remove("hidden");
+    }
+
+    async function copyLink() {
+      const name = input.value.trim();
+
+      if (!name) {
+        resultBox.classList.remove("hidden");
+        resultBox.innerHTML = "<strong>Nama tamu belum diisi.</strong><br>Isi nama tamu dulu, lalu copy link.";
+        openLinkBtn.classList.add("hidden");
+        return;
+      }
+
+      const link = buildGuestLink(name);
+
+      try {
+        await navigator.clipboard.writeText(link);
+        resultBox.classList.remove("hidden");
+        resultBox.innerHTML = "<strong>Berhasil disalin untuk " + escapeHtml(name) + ":</strong><br>" + link;
+        openLinkBtn.href = link;
+        openLinkBtn.classList.remove("hidden");
+      } catch (e) {
+        resultBox.classList.remove("hidden");
+        resultBox.innerHTML = "<strong>Link untuk " + escapeHtml(name) + ":</strong><br>" + link + "<br><br>Silakan copy manual jika tombol copy tidak bekerja.";
+        openLinkBtn.href = link;
+        openLinkBtn.classList.remove("hidden");
+      }
+    }
+
+    function escapeHtml(str) {
+      return str
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    input.addEventListener("keydown", function(e) {
+      if (e.key === "Enter") {
+        generateLink();
+      }
+    });
+  </script>
+</body>
+</html>
